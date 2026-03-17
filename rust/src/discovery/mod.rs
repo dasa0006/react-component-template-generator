@@ -11,7 +11,7 @@ impl DirectoryFinder {
         Self { start }
     }
 
-    pub fn find_components_ui(&self) -> Result<PathBuf, DiscoveryError> {
+    pub fn find_components(&self) -> Result<PathBuf, DiscoveryError> {
         // Strategy 1: Look for existing components/
         let target = self.start.join("components");
         if target.exists() {
@@ -41,7 +41,7 @@ mod tests {
     use tempfile::tempdir;
 
     #[test]
-    fn find_components_ui_when_components_exists() {
+    fn find_components_when_components_exists() {
         let dir = tempdir().unwrap();
         let start = dir.path().to_path_buf();
 
@@ -50,14 +50,14 @@ mod tests {
         fs::create_dir(&components_path).unwrap();
 
         let finder = DirectoryFinder::new(start);
-        let result = finder.find_components_ui().unwrap();
+        let result = finder.find_components().unwrap();
 
         assert_eq!(result, components_path);
         assert!(result.exists());
     }
 
     #[test]
-    fn find_components_ui_when_src_components_exists() {
+    fn find_components_when_src_components_exists() {
         let dir = tempdir().unwrap();
         let start = dir.path().to_path_buf();
 
@@ -66,7 +66,7 @@ mod tests {
         fs::create_dir_all(&src_components).unwrap();
 
         let finder = DirectoryFinder::new(start.clone());
-        let result = finder.find_components_ui().unwrap();
+        let result = finder.find_components().unwrap();
 
         // Should return src/components, not create components/
         assert_eq!(result, src_components);
@@ -77,12 +77,12 @@ mod tests {
     }
 
     #[test]
-    fn find_components_ui_when_neither_exists() {
+    fn find_components_when_neither_exists() {
         let dir = tempdir().unwrap();
         let start = dir.path().to_path_buf();
 
         let finder = DirectoryFinder::new(start.clone());
-        let result = finder.find_components_ui().unwrap();
+        let result = finder.find_components().unwrap();
 
         // Should return start/components (even though it doesn't exist)
         let expected = start.join("components");
@@ -91,12 +91,12 @@ mod tests {
     }
 
     #[test]
-    fn find_components_ui_when_start_path_does_not_exist() {
+    fn find_components_when_start_path_does_not_exist() {
         // Use a path that definitely does not exist
         let start = PathBuf::from("/this/path/does/not/exist/12345");
 
         let finder = DirectoryFinder::new(start.clone());
-        let result = finder.find_components_ui().unwrap();
+        let result = finder.find_components().unwrap();
 
         // Should return start/components, regardless of existence
         let expected = start.join("components");
@@ -105,7 +105,7 @@ mod tests {
     }
 
     #[test]
-    fn find_components_ui_returns_components_over_src_components() {
+    fn find_components_returns_components_over_src_components() {
         let dir = tempdir().unwrap();
         let start = dir.path().to_path_buf();
 
@@ -117,7 +117,7 @@ mod tests {
         fs::create_dir_all(&src_components).unwrap();
 
         let finder = DirectoryFinder::new(start);
-        let result = finder.find_components_ui().unwrap();
+        let result = finder.find_components().unwrap();
 
         // Should prefer components/ over src/components/ (order of checks)
         assert_eq!(result, components);
