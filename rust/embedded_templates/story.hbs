@@ -1,0 +1,14 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import {{component_name}} from "./{{component_name}}";
+import { mock{{component_name}}Props } from "./{{component_name}}.mocks";
+
+const meta = {
+  component: {{component_name}},
+} satisfies Meta<typeof {{component_name}}>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: mock{{component_name}}Props,
+};
